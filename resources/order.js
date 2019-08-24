@@ -20,7 +20,6 @@ ordersRouter.get("/:id", (req, res) => {
 });
 
 ordersRouter.post("/", (req, res) => {
-  const item = req.body;
   res.send({ success: true, order: {} });
 });
 
