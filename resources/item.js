@@ -25,7 +25,7 @@ itemsRouter.get("/:id", (req, res, next) => {
     .then(doc => {
       if (doc.exists)
         res.send({ success: true, item: { id: doc.id, ...doc.data() } });
-      else res.send({ success: false, message: "Order could not be found" });
+      else res.send({ success: false, message: "Item could not be found" });
     })
     .catch(err => next(err));
 });
