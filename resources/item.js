@@ -16,24 +16,13 @@ itemsRouter.get("/", (req, res, next) => {
 
     res.send({ success: true, items });
   });
-  //   res.send({
-  //     success: true,
-  //     items: [
-  //       {
-  //         id: "sadkjhadhjkashdj",
-  //         type: "sdad",
-  //         color: "grey",
-  //         size: "L",
-  //         stock: 3
-  //       }
-  //     ]
-  //   });
 });
 
 itemsRouter.get("/:id", (req, res, next) => {
   itemsColl
     .doc(req.params.id)
-    .get(doc => {
+    .get()
+    .then(doc => {
       if (doc.exists)
         res.send({ success: true, item: { id: doc.id, ...doc.data() } });
       else res.send({ success: false, message: "Order could not be found" });
@@ -87,23 +76,47 @@ itemsRouter.post("/", (req, res, next) => {
       })
       .catch(err => next(err));
   }
-
-  console.log("here!");
 });
 
 itemsRouter.patch("/:id", (req, res, next) => {
-  verifyToken(req, next);
+  if (!verifyToken(req, next)) {
+    next(Error("Unauthorized"));
+    return;
+  }
 
-  res.send({ success: true, id: req.params.id });
+  const { stock } = req.body;
+  if (isNaN(Number(stock))) {
+    next(Error("Invalid request"));
+    return;
+  }
+
+  itemsColl
+    .doc(req.params.id)
+    .update({ stock })
+    .then(() => res.send({ success: true }))
+    .catch(err => next(err));
 });
 
 itemsRouter.delete("/:id", (req, res, next) => {
-  verifyToken(req, next);
-  res.send({ success: true });
+  if (!verifyToken(req, next)) {
+    next(Error("Unauthorized"));
+    return;
+  }
+
+  itemsColl
+    .doc(req.params.id)
+    .delete()
+    .then(() => res.send({ success: true }))
+    .catch(err => next(err));
 });
 
 itemsRouter.use((err, req, res, next) => {
-  res.status(401).send({ success: false, message: err.message });
+  let statusCode = 500;
+
+  if (err.message === "Unauthorized") statusCode = 401;
+  else if (err.message === "Invalid request") statusCode = 400;
+
+  res.status(statusCode).send({ success: false, message: err.message });
 });
 
 module.exports = itemsRouter;
