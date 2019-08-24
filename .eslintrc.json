@@ -1,0 +1,18 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "standard",
+    "prettier",
+    "prettier/standard",
+    "plugin:jest/recommended"
+  ],
+  "plugins": ["prettier", "jest"],
+  "globals": {},
+  "rules": {
+    "no-console": "off",
+    "no-alert": "off"
+  }
+}
