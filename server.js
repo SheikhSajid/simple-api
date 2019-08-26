@@ -12,7 +12,7 @@ app.use(urlencoded({ extended: true }));
 app.use(json());
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.status(400).send({ success: false, message: "Invalid URI" });
 });
 
 app.use("/items?", itemRouter);
