@@ -5,6 +5,7 @@ const cors = require("cors");
 const itemRouter = require("./resources/item");
 const orderRouter = require("./resources/order");
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(urlencoded({ extended: true }));
@@ -17,6 +18,6 @@ app.get("/", (req, res) => {
 app.use("/items?", itemRouter);
 app.use("/orders?", orderRouter);
 
-app.listen(8080, () => {
-  console.log("listening on 8080");
+app.listen(PORT, () => {
+  console.log(`listening on ${PORT}`);
 });
