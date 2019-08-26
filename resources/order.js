@@ -45,17 +45,22 @@ ordersRouter.post("/", (req, res, next) => {
 
         if (quantity > stock) next(Error("Item does not have enough stock"));
         else {
-          t.set(ordersColl.doc(), { itemId, quantity });
+          const newOrder = ordersColl.doc();
+          t.set(newOrder, { itemId, quantity });
           t.update(itemRef, { stock: stock - quantity });
+          return newOrder;
         }
       } else {
         next(Error("Item could not be found"));
       }
     });
   })
-    .then(() => {
+    .then(newOrder => {
       if (!res.headersSent) {
-        res.send({ success: true, order: { itemId, quantity } });
+        res.send({
+          success: true,
+          order: { id: newOrder.id, itemId, quantity }
+        });
       }
     })
     .catch(err => next(err));
