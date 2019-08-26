@@ -47,7 +47,6 @@ itemsRouter.post("/", (req, res, next) => {
   }
 
   const { items } = req.body; // array
-  let itemValid = true;
   const itemIds = [];
 
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -58,11 +57,10 @@ itemsRouter.post("/", (req, res, next) => {
   items.forEach(item => {
     if (!verifyItemShape(item)) {
       next(Error("One (or more) items are invalid"));
-      itemValid = false;
     }
   });
 
-  if (itemValid) {
+  if (!res.headersSent) {
     const addPromises = [];
 
     items.forEach(item => {

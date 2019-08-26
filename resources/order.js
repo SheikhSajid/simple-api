@@ -53,7 +53,11 @@ ordersRouter.post("/", (req, res, next) => {
       }
     });
   })
-    .then(() => res.send({ success: true, order: { itemId, quantity } }))
+    .then(() => {
+      if (!res.headersSent) {
+        res.send({ success: true, order: { itemId, quantity } });
+      }
+    })
     .catch(err => next(err));
 });
 
